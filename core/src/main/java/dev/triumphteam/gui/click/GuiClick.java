@@ -38,5 +38,12 @@ public enum GuiClick {
     CONTROL_DROP,
     CREATIVE,
     SWAP_OFFHAND,
-    UNKNOWN,
+    UNKNOWN;
+
+
+    public static enum Result {
+
+        ALLOW,
+        DISALLOW,
+    }
 }

@@ -23,6 +23,8 @@
  */
 package dev.triumphteam.gui.click.controller;
 
+import dev.triumphteam.gui.click.GuiClick;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -37,4 +39,6 @@ public interface ClickController {
     boolean completingLater();
 
     void completingLater(final boolean value);
+
+    void setClickResult(final @NotNull GuiClick.Result result);
 }

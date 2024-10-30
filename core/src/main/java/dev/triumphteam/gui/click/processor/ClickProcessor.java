@@ -1,18 +1,18 @@
 /**
  * MIT License
- *
+ * <p>
  * Copyright (c) 2024 TriumphTeam
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,6 +27,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import dev.triumphteam.gui.AbstractGuiView;
 import dev.triumphteam.gui.click.ClickContext;
+import dev.triumphteam.gui.click.GuiClick;
 import dev.triumphteam.gui.click.action.EmptyGuiClickAction;
 import dev.triumphteam.gui.click.controller.DefaultClickController;
 import dev.triumphteam.gui.click.handler.ClickHandler;
@@ -63,8 +64,8 @@ public final class ClickProcessor<P, I> {
         // Cache for spam prevention
         this.spamPreventionDuration = spamPreventionDuration;
         this.spamPrevention = CacheBuilder.newBuilder()
-            .expireAfterWrite(spamPreventionDuration, TimeUnit.MILLISECONDS)
-            .build();
+                .expireAfterWrite(spamPreventionDuration, TimeUnit.MILLISECONDS)
+                .build();
     }
 
     /**
@@ -75,22 +76,22 @@ public final class ClickProcessor<P, I> {
      * @param context The context of the click.
      * @param view The current view.
      */
-    public void processClick(final @NotNull ClickContext context, final @NotNull AbstractGuiView<P, I> view) {
+    public GuiClick.Result processClick(final @NotNull ClickContext context, final @NotNull AbstractGuiView<P, I> view) {
 
         final var viewerUuid = view.viewerUuid();
 
         // Check if the player can currently click
         if (!canClick(viewerUuid)) {
-            return;
+            return GuiClick.Result.DISALLOW;
         }
 
         final var renderedItem = view.getItem(context.slot());
-        if (renderedItem == null) return;
+        if (renderedItem == null) return GuiClick.Result.DISALLOW;
 
         final var action = renderedItem.action();
         // Early exit if action is empty
         if (action instanceof EmptyGuiClickAction<P>) {
-            return;
+            return GuiClick.Result.DISALLOW;
         }
 
         // Start processing the click
@@ -103,10 +104,10 @@ public final class ClickProcessor<P, I> {
             // If something went wrong with the click log, the error and stop processing
             if (throwable != null) {
                 LOGGER.error(
-                    "An exception occurred while processing click for '{}' on slot '{}'.",
-                    view.viewerName(),
-                    context.slot(),
-                    throwable
+                        "An exception occurred while processing click for '{}' on slot '{}'.",
+                        view.viewerName(),
+                        context.slot(),
+                        throwable
                 );
             }
 
@@ -126,6 +127,8 @@ public final class ClickProcessor<P, I> {
         if (!clickController.completingLater()) {
             clickController.complete(handledException);
         }
+
+        return clickController.getResult();
     }
 
     /**

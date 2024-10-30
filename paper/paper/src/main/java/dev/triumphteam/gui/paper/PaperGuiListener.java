@@ -48,8 +48,12 @@ public final class PaperGuiListener implements Listener {
         final var view = convertHolder(event.getInventory().getHolder());
         if (view == null) return;
 
-        event.setCancelled(true);
-        view.processClick(new ClickContext(mapClick(event.getClick()), event.getSlot()));
+        final var result = view.processClick(new ClickContext(mapClick(event.getClick()), event.getSlot()));
+
+        switch (result) {
+            case ALLOW -> event.setCancelled(false);
+            case DISALLOW -> event.setCancelled(true);
+        }
     }
 
     @EventHandler

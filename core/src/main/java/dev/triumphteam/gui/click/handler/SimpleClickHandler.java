@@ -1,18 +1,18 @@
 /**
  * MIT License
- *
+ * <p>
  * Copyright (c) 2024 TriumphTeam
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,6 +25,7 @@ package dev.triumphteam.gui.click.handler;
 
 import dev.triumphteam.gui.click.ClickContext;
 import dev.triumphteam.gui.click.action.GuiClickAction;
+import dev.triumphteam.gui.click.action.PickClickAction;
 import dev.triumphteam.gui.click.action.RunnableGuiClickAction;
 import dev.triumphteam.gui.click.controller.ClickController;
 import dev.triumphteam.gui.exception.TriumphGuiException;
@@ -42,12 +43,19 @@ public final class SimpleClickHandler<P> implements ClickHandler<P> {
 
     @Override
     public void handle(
-        final @NotNull P player,
-        final @NotNull ClickContext context,
-        final @NotNull GuiClickAction<P> action,
-        final @NotNull ClickController controller
+            final @NotNull P player,
+            final @NotNull ClickContext context,
+            final @NotNull GuiClickAction<P> action,
+            final @NotNull ClickController controller
     ) {
-        // Only accept runnable actions
+
+        // Handle action that allows items to be taken from the inventory
+        if (action instanceof PickClickAction<P> pickClickAction) {
+            controller.setClickResult(pickClickAction.run(player, context));
+            return;
+        }
+
+        // From here on we only allow runnable actions
         if (!(action instanceof RunnableGuiClickAction<P> runnableAction)) {
             throw new TriumphGuiException("The click action type '" + action.getClass().getName() + "' is supported by the 'CompletableFutureClickHandler'.");
         }

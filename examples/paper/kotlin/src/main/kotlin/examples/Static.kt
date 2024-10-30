@@ -23,6 +23,8 @@
  */
 package dev.triumphteam.gui.example.examples
 
+import dev.triumphteam.gui.click.GuiClick
+import dev.triumphteam.gui.click.action.PickClickAction
 import dev.triumphteam.gui.kotlin.set
 import dev.triumphteam.gui.paper.builder.item.ItemBuilder
 import dev.triumphteam.gui.paper.kotlin.builder.buildGui
